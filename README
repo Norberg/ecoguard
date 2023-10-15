@@ -1,0 +1,25 @@
+
+
+Setup postgress database
+
+# Create User
+sudo -u postgres psql -c "CREATE USER ecoguard WITH PASSWORD 'ecoguard';"
+
+# Create Database
+sudo -u postgres psql -c "CREATE DATABASE ecoguard;"
+
+# Grant Privileges
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ecoguard TO ecoguard;"
+
+# Create Table
+sudo -u postgres  psql -U ecoguard -d ecoguard -c "
+CREATE TABLE node_data (
+    id SERIAL PRIMARY KEY,
+    node_id INT,
+    node_name VARCHAR(255),
+    func VARCHAR(50),
+    unit VARCHAR(50),
+    utl VARCHAR(50),
+    timestamp INT,
+    value FLOAT
+);"

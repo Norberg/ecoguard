@@ -11,8 +11,12 @@ sudo -u postgres psql -c "CREATE DATABASE ecoguard;"
 # Grant Privileges
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ecoguard TO ecoguard;"
 
+# Grant Schema Privileges
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ecoguard;" -d ecoguard
+
 # Create Table
-sudo -u postgres  psql -U ecoguard -d ecoguard -c "
+
+psql -h localhost -U ecoguard -d ecoguard -c  "
 CREATE TABLE node_data (
     id SERIAL PRIMARY KEY,
     node_id INT,
@@ -20,6 +24,10 @@ CREATE TABLE node_data (
     func VARCHAR(50),
     unit VARCHAR(50),
     utl VARCHAR(50),
-    timestamp INT,
+    timestamp TIMESTAMP WITHOUT TIME ZONE,
     value FLOAT
-);"
+);
+
+-- Create Unique Index
+CREATE UNIQUE INDEX idx_unique_node_data ON node_data(node_id, node_name, func, unit, utl, timestamp);
+"

@@ -61,7 +61,7 @@ class EcoGuardClient:
         response_data = self.make_request('GET', f'api/{self.domain}/data', params={
             'nodeID': node_id,
             'interval': interval,
-            'utl': f"{utl.value}",
+            'utl': f"{utl.full_string}",
             'from': from_timestamp,
             'to': to_timestamp
         })
@@ -70,8 +70,15 @@ class EcoGuardClient:
         for node in response_data:
             for result in node['Result']:
                 for value_entry in result['Values']:
-                    value_entry['Value'] = round(float(value_entry['Value']), 3)
-                    value_entry['Time'] = datetime.utcfromtimestamp(value_entry['Time'])
+                    readable_time = datetime.utcfromtimestamp(value_entry['Time'])
+                    try:
+                        # Validate and possibly correct the Value
+                        value_entry['Value'] = round(float(value_entry.get('Value', 0)), 3)
+                    except Exception:
+                        value_entry['Value'] = None
+                        print(f"Unexpected Value: {value_entry.get('Value')} for Utl {utl} Time {readable_time}")
+                    
+                    value_entry['Time'] = readable_time
 
         return response_data
     

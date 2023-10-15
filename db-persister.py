@@ -5,6 +5,13 @@ from ecoguard.ecoguard_client import EcoGuardClient
 from ecoguard.utl_type import UtlType
 from pprint import pprint
 
+def get_latest_timestamp(cursor, utl_type):
+    """
+    Fetch the latest timestamp for a specific utl_type from the database.
+    """
+    cursor.execute("SELECT MAX(timestamp) FROM node_data WHERE utl = %s;", (utl_type,))
+    result = cursor.fetchone()
+    return result[0] if result[0] is not None else None
 
 def insert_data_to_db(cursor, node, func, unit, utl, timestamp, value):
     insert_query = """
@@ -47,9 +54,20 @@ def main():
         # Fetch data from EcoGuard API
         user_info = client.get_user_info()
         node_id = user_info.get('NodeID')
-        from_datetime = datetime.utcnow() - timedelta(days=1)
 
+        # Assume UtlType is an Enum with your types
         for utl_type in UtlType:
+            latest_timestamp = get_latest_timestamp(cursor, utl_type.code)
+            
+            if latest_timestamp:
+                from_datetime = latest_timestamp
+            elif utl_type is UtlType.TEMPERATURE:
+                print(f"Initial loading for {utl_type.name}, loading from one year ago")
+                from_datetime = datetime.now() - timedelta(days=365)
+            else:
+                print(f"Initial loading for {utl_type.name}, loading from start")
+                from_datetime = None
+
             try:
                 node_data = client.get_node_data(node_id, utl_type, from_datetime)
                 pprint(node_data)

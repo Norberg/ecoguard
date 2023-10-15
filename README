@@ -1,6 +1,14 @@
+# Api documenation
+https://integration.ecoguard.se/
+https://ecoguard.se/support/nedladdning/ (Curves integration REST-API)
 
 
-Setup postgress database
+
+# Install dependencies
+sudo apt-get install python3-psycopg2
+
+
+# Setup postgress database
 
 # Create User
 sudo -u postgres psql -c "CREATE USER ecoguard WITH PASSWORD 'ecoguard';"
@@ -28,6 +36,7 @@ CREATE TABLE node_data (
     value FLOAT
 );
 
--- Create Unique Index
-CREATE UNIQUE INDEX idx_unique_node_data ON node_data(node_id, node_name, func, unit, utl, timestamp);
+-- Create Unique Constraint
+ALTER TABLE node_data
+    ADD CONSTRAINT idx_unique_node_data UNIQUE (node_id, node_name, func, unit, utl, timestamp);
 "

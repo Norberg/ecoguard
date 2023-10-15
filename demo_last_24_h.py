@@ -25,11 +25,10 @@ def main():
     
     # Getting data for the last 24 hours
     from_datetime = datetime.utcnow() - timedelta(days=1)
-    to_datetime = datetime.utcnow()    
     for utl_type in UtlType:
         print(f"\nFetching data for: {utl_type.name}")
         try:
-            node_data = client.get_node_data(node_id, utl_type, from_datetime, to_datetime)
+            node_data = client.get_node_data(node_id, utl_type, from_datetime)
             client.pretty_print_node_data(node_data)
         except Exception as e:
             print(f"Failed to fetch or print data for {utl_type.name}: {str(e)}")

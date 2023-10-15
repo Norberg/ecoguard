@@ -9,7 +9,9 @@ from pprint import pprint
 def insert_data_to_db(cursor, node, func, unit, utl, timestamp, value):
     insert_query = """
     INSERT INTO node_data (node_id, node_name, func, unit, utl, timestamp, value)
-    VALUES (%s, %s, %s, %s, %s, %s, %s);
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    ON CONFLICT ON CONSTRAINT idx_unique_node_data
+    DO UPDATE SET value = EXCLUDED.value;
     """
     cursor.execute(insert_query, (node['ID'], node['Name'], func, unit, utl, timestamp, value))
 
@@ -46,11 +48,10 @@ def main():
         user_info = client.get_user_info()
         node_id = user_info.get('NodeID')
         from_datetime = datetime.utcnow() - timedelta(days=1)
-        to_datetime = datetime.utcnow()
 
         for utl_type in UtlType:
             try:
-                node_data = client.get_node_data(node_id, utl_type, from_datetime, to_datetime)
+                node_data = client.get_node_data(node_id, utl_type, from_datetime)
                 pprint(node_data)
                 for node in node_data:
                     for result in node['Result']:

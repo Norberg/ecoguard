@@ -66,10 +66,12 @@ class EcoGuardClient:
             'to': to_timestamp
         })
 
+        #Prettify the API response
         for node in response_data:
             for result in node['Result']:
                 for value_entry in result['Values']:
                     value_entry['Value'] = round(float(value_entry['Value']), 3)
+                    value_entry['Time'] = datetime.utcfromtimestamp(value_entry['Time'])
 
         return response_data
     
@@ -88,5 +90,4 @@ class EcoGuardClient:
                 for value_entry in result['Values']:
                     timestamp = value_entry['Time']
                     value = value_entry['Value']
-                    readable_time = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
-                    print(f"    Time: {readable_time}, Value: {value}")
+                    print(f"    Time: {timestamp}, Value: {value}")

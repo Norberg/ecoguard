@@ -1,5 +1,6 @@
 import configparser
 import psycopg2
+import os
 from datetime import datetime, timedelta
 from ecoguard.ecoguard_client import EcoGuardClient
 from ecoguard.utl_type import UtlType
@@ -25,7 +26,10 @@ def insert_data_to_db(cursor, node, func, unit, utl, timestamp, value):
 def main():
     # Load Configurations
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    # Get the absolute path to the directory where the script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config.read(os.path.join(script_dir, 'config.ini'))
+
 
     # EcoGuard API configurations
     ecoguard_username = config['ECOGUARD']['USERNAME']

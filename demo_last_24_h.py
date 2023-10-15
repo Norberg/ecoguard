@@ -1,4 +1,4 @@
-import requests
+import os
 from pprint import pprint
 import configparser
 from datetime import datetime, timedelta
@@ -6,8 +6,11 @@ from ecoguard.ecoguard_client import EcoGuardClient
 from ecoguard.utl_type import UtlType
 
 def main():
+    # Load Configurations
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    # Get the absolute path to the directory where the script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config.read(os.path.join(script_dir, 'config.ini'))
 
     username = config['ECOGUARD']['USERNAME']
     password = config['ECOGUARD']['PASSWORD']

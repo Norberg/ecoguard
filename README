@@ -40,3 +40,12 @@ CREATE TABLE node_data (
 ALTER TABLE node_data
     ADD CONSTRAINT idx_unique_node_data UNIQUE (node_id, node_name, func, unit, utl, timestamp);
 "
+
+
+# Configure crontab execution of db-persister
+# Install moretools to get ts tool
+sudo apt-get install moreutils
+
+# Add the following when running crontab -e
+*/10 * * * * /usr/bin/python3 ~/ecoguard/db-persister.py 2>&1 | ts '%Y-%m-%d %H:%M:%S' >> ~/ecoguard/db-persister.log
+

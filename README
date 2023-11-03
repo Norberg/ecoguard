@@ -43,9 +43,8 @@ ALTER TABLE node_data
 
 
 # Configure crontab execution of db-persister
-# Install moretools to get ts tool
-sudo apt-get install moreutils
+# Install expect to get unbuffer tool
+sudo apt-get install expect
 
 # Add the following when running crontab -e
-*/10 * * * * /usr/bin/python3 ~/ecoguard/db-persister.py 2>&1 | ts '%Y-%m-%d %H:%M:%S' >> ~/ecoguard/db-persister.log
-
+*/10 * * * * ~/ecoguard/run_db_persister.sh > /dev/null

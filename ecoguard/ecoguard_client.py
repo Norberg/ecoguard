@@ -47,6 +47,27 @@ class EcoGuardClient:
     def get_nodes_info(self, node_id):
         return self.make_request('GET', f'api/{self.domain}/nodes/{node_id}?')
     
+    def get_billing_results(self):
+        response_data = self.make_request('GET', f'api/{self.domain}/billingresults')
+        
+        # Prettify the API response
+        for billing_result in response_data:
+            # Convert Start and End timestamps
+            billing_result['Start'] = datetime.utcfromtimestamp(billing_result['Start'])
+            billing_result['End'] = datetime.utcfromtimestamp(billing_result['End'])
+            
+            # Convert timestamps in Parts
+            for part in billing_result.get('Parts', []):
+                for item in part.get('Items', []):
+                    item['Quantity'] = round(float(item.get('Quantity', 0)), 3)
+                    VAT=1.25
+                    item['TotalCostWithVAT'] = round(item['Total'] + part['VAT'],2)
+                    item['RateWithVAT'] = round(item['Rate'] * VAT, 2)   
+                    item['Start'] = datetime.utcfromtimestamp(item['Start'])
+                    item['End'] = datetime.utcfromtimestamp(item['End'])
+                    
+        return response_data
+    
     def get_node_data(self, node_id, utl, from_datetime=None, to_datetime=None, interval='H'):
         if from_datetime:
             from_timestamp = int(from_datetime.replace(minute=0, second=0).timestamp())

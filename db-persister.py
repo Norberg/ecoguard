@@ -44,6 +44,8 @@ def main():
 
     # Initialize EcoGuardClient
     client = EcoGuardClient(ecoguard_username, ecoguard_password, ecoguard_domain)
+    
+    print("Starting database persisting!")
 
     # Connect to PostgreSQL
     conn = psycopg2.connect(

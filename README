@@ -22,24 +22,8 @@ sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ecoguard TO ecoguard;
 # Grant Schema Privileges
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ecoguard;" -d ecoguard
 
-# Create Table
-
-psql -h localhost -U ecoguard -d ecoguard -c  "
-CREATE TABLE node_data (
-    id SERIAL PRIMARY KEY,
-    node_id INT,
-    node_name VARCHAR(255),
-    func VARCHAR(50),
-    unit VARCHAR(50),
-    utl VARCHAR(50),
-    timestamp TIMESTAMP WITHOUT TIME ZONE,
-    value FLOAT
-);
-
--- Create Unique Constraint
-ALTER TABLE node_data
-    ADD CONSTRAINT idx_unique_node_data UNIQUE (node_id, node_name, func, unit, utl, timestamp);
-"
+# Create Schemas
+python3 create_database_schema.py
 
 
 # Configure crontab execution of db-persister
